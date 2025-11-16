@@ -24,8 +24,6 @@ class Cursor(ABC):
         self.speed_px_per_sec = float(speed_px_per_sec)
         self.frame_rate = int(frame_rate)
 
-    # ---- primitives that OS-specific subclasses must implement ----
-
     @abstractmethod
     def get_pos(self) -> Tuple[int, int]:
         """Return the current cursor position as (x, y)."""
@@ -44,8 +42,6 @@ class Cursor(ABC):
         Should account for multi-monitor setups when possible.
         """
         raise NotImplementedError
-
-    # ---- shared helpers implemented in the base class ----
 
     def clamp_target(self, x: int, y: int) -> Tuple[int, int]:
         """Clamp (x, y) to the virtual desktop bounds."""
@@ -79,8 +75,6 @@ class Cursor(ABC):
             nx = round(cx + dx * t)
             ny = round(cy + dy * t)
             self.set_pos(nx, ny)
-
-            # keep approximate timing
             target_elapsed = t * duration
             now = time.perf_counter()
             sleep_time = (start_time + target_elapsed) - now
