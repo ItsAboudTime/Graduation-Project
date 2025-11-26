@@ -11,18 +11,18 @@ cd Graduation-Project
 ### 2. Create a Virtual Environment
 - **macOS/Linux**:
   ```bash
-  python3 -m venv .venv
-  source .venv/bin/activate
+  python3 -m venv venv
+  source venv/bin/activate
   ```
 - **Windows (Command Prompt)**:
   ```cmd
-  python -m venv .venv
-  .venv\Scripts\activate
+  python -m venv venv
+  venv\Scripts\activate
   ```
 - **Windows (PowerShell)**:
   ```powershell
-  python -m venv .venv
-  .venv\Scripts\Activate.ps1
+  python -m venv venv
+  venv\Scripts\Activate.ps1
   ```
 
 ### 3. Install Python Dependencies
