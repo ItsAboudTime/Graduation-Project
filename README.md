@@ -42,7 +42,16 @@ sudo apt-get update
 sudo apt-get install xdotool x11-xserver-utils
 ```
 
-### 5. Run the Project
+### 5. Run Examples
+
+- CLI cursor move (type coordinates):
 ```bash
-python main.py
+python examples/cursor-control.py
 ```
+
+- Linux head-controlled cursor (webcam required):
+```bash
+python examples/head-cursor.py
+```
+
+If you run `python main.py`, you'll see a message pointing to these examples.

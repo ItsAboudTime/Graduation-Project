@@ -1,6 +1,15 @@
 pip==25.3
 setuptools==58.0.4
 
+# macOS-only
 pyobjc-core==11.1; sys_platform == "darwin"
 pyobjc-framework-Cocoa==11.1; sys_platform == "darwin"
 pyobjc-framework-Quartz==11.1; sys_platform == "darwin"
+
+# Core Python deps used by examples (Linux-only)
+opencv-python>=4.8; sys_platform == "linux"
+mediapipe>=0.10; sys_platform == "linux"
+numpy>=1.24; sys_platform == "linux"
+scipy; sys_platform == "linux"
+pyautogui; sys_platform == "linux"
+keyboard; sys_platform == "linux"
