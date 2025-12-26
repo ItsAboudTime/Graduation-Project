@@ -46,10 +46,15 @@ sudo apt-get install xdotool x11-xserver-utils
 
 - CLI cursor move, click, and scroll:
 ```bash
-python examples/cursor-control.py
+python -m examples.cursor_control
 ```
 
 - Linux head-controlled cursor (webcam required):
 ```bash
-python examples/head-cursor.py
+python examples/head_cursor.py
+```
+
+- Linux wink-controlled cursor (webcam required):
+```bash
+python -m examples.wink_cursor
 ```

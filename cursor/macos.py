@@ -9,9 +9,12 @@ from Quartz import (
     kCGEventLeftMouseUp,
     kCGEventRightMouseDown,
     kCGEventRightMouseUp,
-    kCGEventScrollWheel,
+    CGDisplayBounds,
+    CGMainDisplayID,
+    CGEventCreate,
+    CGEventGetLocation,
+    CGEventCreateScrollWheelEvent,
 )
-from Quartz import CGDisplayBounds, CGMainDisplayID, CGEventCreate, CGEventGetLocation, CGEventCreateScrollWheelEvent
 
 
 # Currently only supports single display setups.

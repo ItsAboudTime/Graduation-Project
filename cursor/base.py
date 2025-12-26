@@ -14,6 +14,9 @@ class Cursor(ABC):
       - get_pos
       - set_pos
       - get_virtual_bounds
+      - left_click
+      - right_click
+      - scroll
     """
 
     def __init__(
@@ -22,6 +25,17 @@ class Cursor(ABC):
         frame_rate: int = DEFAULT_FRAME_RATE,
         scroll_speed_sec: float = DEFAULT_SCROLL_SPEED_PX_PER_SEC,
     ) -> None:
+        self.speed_px_per_sec = float(speed_px_per_sec)
+        self.frame_rate = int(frame_rate)
+        self.scroll_speed_sec = float(scroll_speed_sec)
+
+    def update_config(
+        self,
+        speed_px_per_sec: float,
+        frame_rate: int,
+        scroll_speed_sec: float,
+    ) -> None:
+        """Update cursor configuration."""
         self.speed_px_per_sec = float(speed_px_per_sec)
         self.frame_rate = int(frame_rate)
         self.scroll_speed_sec = float(scroll_speed_sec)
