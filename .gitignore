@@ -2,3 +2,4 @@ venv/
 cursor/__pycache__/
 examples/__pycache__/
 ui/__pycache__/
+head_track/__pycache__/

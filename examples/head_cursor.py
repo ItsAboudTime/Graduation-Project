@@ -5,26 +5,12 @@ Requires webcam, OpenCV, and MediaPipe. Press 'q' to quit, 'c' to calibrate.
 """
 
 import sys
-import os
 import threading
 import queue
-import time
-import importlib.util
-
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
 
 from cursor import create_cursor
 from ui.settings import SettingsWindow
-
-TRACKER_PATH = os.path.join(ROOT, "head-track", "tracker.py")
-spec = importlib.util.spec_from_file_location("head_track_tracker", TRACKER_PATH)
-if spec is None or spec.loader is None:
-    raise ImportError(f"Cannot load tracker module from {TRACKER_PATH}")
-_mod = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(_mod)
-HeadPoseTracker = _mod.HeadPoseTracker
+from head_track import HeadPoseTracker
 
 
 def run_tracking_loop(cur, tracker, stop_queue):
