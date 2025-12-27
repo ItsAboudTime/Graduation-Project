@@ -117,19 +117,47 @@ class Cursor(ABC):
 
     def scroll_with_speed(self, delta: int) -> None:
         """
-        Scroll the mouse wheel with the configured scroll speed in pixels per second.
-        Positive delta scrolls up, negative scrolls down.
+        Scroll the mouse wheel with the configured scroll speed.
+        Uses an accumulator to handle sub-unit scrolling smoothly.
         """
-        steps = max(1, int(self.frame_rate * abs(delta) / self.scroll_units_per_sec))
-        step_delta = 1 if delta > 0 else -1
-        total_duration = abs(delta) / self.scroll_units_per_sec
+        if delta == 0:
+            return
 
+        # 1. Calculate total time needed using the new variable name: scroll_units_per_sec
+        total_duration = abs(delta) / max(1e-6, self.scroll_units_per_sec)
+        
+        # 2. Calculate number of frames (steps)
+        steps = max(1, int(self.frame_rate * total_duration))
+        
+        # 3. Calculate how much to scroll per step (e.g. 0.2 units)
+        per_step_scroll = delta / steps
+        
+        accumulator = 0.0
         start_time = time.perf_counter()
+
         for i in range(1, steps + 1):
-            t = i / steps
-            self.scroll(step_delta)
-            target_elapsed = t * total_duration
+            # Add the fractional amount to our "bucket"
+            accumulator += per_step_scroll
+            
+            # Check if we have enough in the bucket to actually scroll (>= 1 or <= -1)
+            # We use int() to truncate (e.g. 1.9 -> 1, -1.9 -> -1)
+            scroll_amount = int(accumulator)
+            
+            if scroll_amount != 0:
+                self.scroll(scroll_amount)
+                # Remove the part we just scrolled from the bucket
+                accumulator -= scroll_amount
+
+            # 4. Standard timing logic
+            target_elapsed = (i / steps) * total_duration
             now = time.perf_counter()
             sleep_time = (start_time + target_elapsed) - now
+            
             if sleep_time > 0:
                 time.sleep(sleep_time)
+        
+        # 5. Final cleanup: Ensure we scroll any remaining amount
+        # (Handles cases where rounding errors left 1 tick behind)
+        remaining = int(accumulator + 0.5) if delta > 0 else int(accumulator - 0.5)
+        if remaining != 0:
+            self.scroll(remaining)
