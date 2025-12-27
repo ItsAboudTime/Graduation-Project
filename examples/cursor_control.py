@@ -4,7 +4,7 @@ import tkinter as tk
 import queue
 
 from cursor import create_cursor
-from ui.settings import SettingsWindow
+from ui import SettingsWindow
 
 
 def parse_coords(raw: str):
@@ -88,54 +88,32 @@ def run_cli_loop(cur, stop_queue):
 
 def main():
     cur = create_cursor()
+    msg_queue = queue.Queue()
 
-    # 1. Initialize Tkinter in the MAIN thread
+    # Initialize UI (Inject the cursor directly)
     try:
-        root = tk.Tk()
+        # Call the class method directly
+        root = SettingsWindow.create_app(cursor=cur)
     except Exception as e:
         print(f"Fatal Error: Could not start Tkinter: {e}")
         return
 
-    # 2. Create a Queue for communication
-    msg_queue = queue.Queue()
-
-    # 3. Setup the Settings UI
-    def on_save(move_speed: float, frame_rate: int, scroll_units: float):
-        try:
-            cur.update_config(
-                move_px_per_sec=move_speed, 
-                frame_rate=frame_rate, 
-                scroll_units_per_sec=scroll_units
-            )
-            print(f"\nConfiguration updated: Move={move_speed} px/s, FPS={frame_rate}, Scroll={scroll_units} units/s")
-        except Exception as e:
-            print(f"\nFailed to update cursor configuration: {e}")
-
-    try:
-        settings_win = SettingsWindow(root, on_save=on_save)
-    except Exception as e:
-        print(f"Warning: failed to init settings UI: {e}")
-
-    # 4. Define the Queue Polling function (runs on Main Thread)
+    # Define Main Thread Polling
     def check_queue():
         try:
-            # Check if the thread sent a message
             msg = msg_queue.get_nowait()
             if msg == "QUIT":
-                root.quit()  # Break the mainloop
+                root.quit()
                 sys.exit(0)
         except queue.Empty:
             pass
-        
-        # Schedule next check in 100ms
         root.after(100, check_queue)
 
-    # 5. Start the CLI loop in a BACKGROUND thread
-    # We pass 'cur' and 'msg_queue' to it
+    # Start Background Thread (CLI)
     t = threading.Thread(target=run_cli_loop, args=(cur, msg_queue), daemon=True)
     t.start()
 
-    # 6. Start the Polling and the Mainloop
+    # Start App
     check_queue()
     root.mainloop()
 
