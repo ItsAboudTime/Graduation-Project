@@ -7,6 +7,9 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from cursor import create_cursor
+from ui.settings import SettingsWindow
+import threading
+import tkinter as tk
 
 
 def parse_coords(raw: str):
@@ -35,6 +38,23 @@ def parse_coords(raw: str):
 
 def main():
     cur = create_cursor()
+
+    # Create settings UI and wire its save callback to update cursor config.
+    def on_save(speed: float, frame_rate: int, scroll_speed: float):
+        try:
+            cur.update_config(speed, frame_rate, scroll_speed)
+            print(f"\nConfiguration updated: speed={speed} px/s, frame_rate={frame_rate} fps, scroll_speed={scroll_speed} px/s")
+        except Exception as e:
+            print(f"\nFailed to update cursor configuration: {e}")
+
+    try:
+        root = tk.Tk()
+        settings_win = SettingsWindow(root, on_save=on_save)
+        # Run the Tk event loop in a background daemon thread so CLI remains usable.
+        t = threading.Thread(target=root.mainloop, daemon=True)
+        t.start()
+    except Exception as e:
+        print(f"Warning: failed to start settings UI: {e}")
 
     minx, miny, maxx, maxy = cur.get_virtual_bounds()
     print("Cursor Move (CLI)")
