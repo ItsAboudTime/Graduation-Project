@@ -39,7 +39,7 @@ def run_cli_loop(cur, stop_queue):
     minx, miny, maxx, maxy = cur.get_virtual_bounds()
     print("Cursor Move (CLI)")
     print(f"Virtual screen bounds: x [{minx}..{maxx}], y [{miny}..{maxy}]")
-    print(f"Speed: {cur.speed_px_per_sec} px/s")
+    print(f"Move Speed: {cur.move_px_per_sec} px/s")
     print("Enter coordinates as 'x y' or 'x,y' (type 'q' to quit).")
     print("Commands: 'left' for left click, 'right' for right click, 'scroll <delta>' for scrolling.\n")
 
@@ -100,10 +100,14 @@ def main():
     msg_queue = queue.Queue()
 
     # 3. Setup the Settings UI
-    def on_save(speed: float, frame_rate: int, scroll_speed: float):
+    def on_save(move_speed: float, frame_rate: int, scroll_units: float):
         try:
-            cur.update_config(speed, frame_rate, scroll_speed)
-            print(f"\nConfiguration updated: speed={speed}, fps={frame_rate}, scroll={scroll_speed}")
+            cur.update_config(
+                move_px_per_sec=move_speed, 
+                frame_rate=frame_rate, 
+                scroll_units_per_sec=scroll_units
+            )
+            print(f"\nConfiguration updated: Move={move_speed} px/s, FPS={frame_rate}, Scroll={scroll_units} units/s")
         except Exception as e:
             print(f"\nFailed to update cursor configuration: {e}")
 

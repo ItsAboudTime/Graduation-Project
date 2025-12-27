@@ -2,13 +2,18 @@ import sys
 import importlib
 from typing import Type
 from cursor.base import Cursor
-from cursor.config import DEFAULT_SPEED_PX_PER_SEC, DEFAULT_FRAME_RATE
+from cursor.constants import (
+    DEFAULT_MOVE_PX_PER_SEC,
+    DEFAULT_FRAME_RATE,
+    DEFAULT_SCROLL_UNITS_PER_SEC,
+)
 
 _PLATFORM_IMPLS: dict[str, tuple[str, str]] = {
     "win": ("cursor.windows", "WindowsCursor"),
     "darwin": ("cursor.macos", "MacOSCursor"),
     "linux": ("cursor.linux", "LinuxCursor"),
 }
+
 
 def _load_impl_for_platform() -> Type[Cursor]:
     plat = sys.platform
@@ -18,7 +23,18 @@ def _load_impl_for_platform() -> Type[Cursor]:
             return getattr(module, class_name)
     raise RuntimeError(f"No cursor implementation available for OS: {plat!r}")
 
-def create_cursor(speed_px_per_sec=DEFAULT_SPEED_PX_PER_SEC,
-                  frame_rate=DEFAULT_FRAME_RATE) -> Cursor:
+
+def create_cursor(
+    move_px_per_sec: float = DEFAULT_MOVE_PX_PER_SEC,
+    frame_rate: int = DEFAULT_FRAME_RATE,
+    scroll_units_per_sec: float = DEFAULT_SCROLL_UNITS_PER_SEC,
+) -> Cursor:
+    """
+    Factory function to create a platform-specific Cursor instance.
+    """
     impl_cls = _load_impl_for_platform()
-    return impl_cls(speed_px_per_sec=speed_px_per_sec, frame_rate=frame_rate)
+    return impl_cls(
+        move_px_per_sec=move_px_per_sec,
+        frame_rate=frame_rate,
+        scroll_units_per_sec=scroll_units_per_sec,
+    )
