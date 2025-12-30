@@ -4,7 +4,7 @@
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/ItsAboudTime/Graduation-Project.git
+git clone https://github.com/ItsAboudTime/EyeCursor.git
 cd Graduation-Project
 ```
 
